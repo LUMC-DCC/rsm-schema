@@ -1,0 +1,53 @@
+name: Lint
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ruff:
+    name: Format and lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up project
+        uses: ./.github/actions/setup
+        with:
+          groups: dev
+      - name: Validate pre-commit configuration
+        run: poetry run pre-commit validate-config
+      - name: Check Python
+        run: poetry run ruff check .
+      - name: Check Python formatting
+        run: poetry run ruff format --check .
+
+  generated:
+    name: Generated models
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up project
+        uses: ./.github/actions/setup
+        with:
+          groups: dev
+
+      # The models are committed so consumers do not need the code generator.
+      # Regenerating and diffing is what keeps that copy honest: a schema change
+      # without a matching regeneration fails here.
+      - name: Regenerate and check for drift
+        run: |
+          poetry run datamodel-codegen
+          git diff --exit-code -- src/rsm_schema/generated/models.py

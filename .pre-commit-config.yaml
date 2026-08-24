@@ -1,0 +1,19 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: Check Python with Ruff
+        entry: poetry run ruff check .
+        language: system
+        pass_filenames: false
+      - id: ruff-format
+        name: Check Python formatting with Ruff
+        entry: poetry run ruff format --check .
+        language: system
+        pass_filenames: false
+      - id: generated-models
+        name: Regenerate schema models and check for drift
+        entry: poetry run datamodel-codegen
+        language: system
+        pass_filenames: false
+        files: ^(src/rsm_schema/schema/|pyproject\.toml)
