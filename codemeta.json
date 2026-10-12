@@ -9,7 +9,11 @@
   "name": "rsm-schema",
   "description": "Python access to the RSM JSON Schema, generated Pydantic models, and schema inspection utilities.",
   "version": "1.0.0",
-  "identifier": "https://github.com/LUMC-DCC/rsm-schema",
+  "identifier": {
+    "@type": "PropertyValue",
+    "propertyID": "doi",
+    "value": "https://doi.org/10.5281/zenodo.23307561"
+  },
   "author": [
     {
       "@id": "https://orcid.org/0000-0002-0852-4752",
