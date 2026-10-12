@@ -870,6 +870,21 @@ testing = ["beautifulsoup4", "coverage[toml]", "defusedxml", "pygments (<2.19)",
 testing-docutils = ["pygments", "pytest (>=8,<9)", "pytest-param-files (>=0.6.0,<0.7.0)"]
 
 [[package]]
+name = "nameparser"
+version = "2.4.0"
+description = "A simple Python module for parsing human names into their individual components."
+optional = false
+python-versions = ">=3.11"
+groups = ["main"]
+files = [
+    {file = "nameparser-2.4.0-py3-none-any.whl", hash = "sha256:662e5ef60d040b60c32d4328396e5e8238c8ec44e66cfbebb18439cb89fea6da"},
+    {file = "nameparser-2.4.0.tar.gz", hash = "sha256:e5e56006d342a3d54ce09b5a91476ddbfb04ea0c9038b2649f7ba26c90c982e3"},
+]
+
+[package.extras]
+ja = ["namedivider-python (>=0.4)"]
+
+[[package]]
 name = "nodeenv"
 version = "1.10.0"
 description = "Node.js virtual environment builder"
@@ -887,7 +902,7 @@ version = "26.3"
 description = "Core utilities for Python packages"
 optional = false
 python-versions = ">=3.9"
-groups = ["dev", "docs"]
+groups = ["main", "dev", "docs"]
 files = [
     {file = "packaging-26.3-py3-none-any.whl", hash = "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"},
     {file = "packaging-26.3.tar.gz", hash = "sha256:94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79"},
@@ -1257,7 +1272,7 @@ version = "6.0.3"
 description = "YAML parser and emitter for Python"
 optional = false
 python-versions = ">=3.8"
-groups = ["dev", "docs"]
+groups = ["main", "dev", "docs"]
 files = [
     {file = "PyYAML-6.0.3-cp38-cp38-macosx_10_13_x86_64.whl", hash = "sha256:c2514fceb77bc5e7a2f7adfaa1feb2fb311607c9cb518dbc378688ec73d8292f"},
     {file = "PyYAML-6.0.3-cp38-cp38-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:9c57bb8c96f6d1808c030b1687b9b5fb476abaa47f0db9c0101f5e9f394e97f4"},
@@ -1524,6 +1539,24 @@ files = [
     {file = "rpds_py-2026.6.3-pp311-pypy311_pp73-musllinux_1_2_x86_64.whl", hash = "sha256:8e65860d238379ed982fd9ba690579b5e95af2f4840f99c772816dbe573cb826"},
     {file = "rpds_py-2026.6.3.tar.gz", hash = "sha256:1cebd1337c242e4ec2293e541f712b2da849b29f48f0c293684b71c0632625d4"},
 ]
+
+[[package]]
+name = "rs-metadata"
+version = "1.0.0"
+description = "Validate research software metadata against the LUMC CodeMeta profile, and keep codemeta.json consistent with CITATION.cff and other metadata."
+optional = false
+python-versions = ">=3.11"
+groups = ["main"]
+files = [
+    {file = "rs_metadata-1.0.0-py3-none-any.whl", hash = "sha256:484d3059acbe517ab5ce66adf09dccdabc673c23625c0856233a2acd181278b1"},
+    {file = "rs_metadata-1.0.0.tar.gz", hash = "sha256:5db82bfb46b8691c604a5811c8eb7e7b6e4bd9c143a7551654c8faf4974fbafc"},
+]
+
+[package.dependencies]
+jsonschema = ">=4.21,<5"
+nameparser = ">=2.2.0"
+packaging = ">=23.0"
+pyyaml = ">=6.0,<7"
 
 [[package]]
 name = "ruff"
@@ -1853,4 +1886,4 @@ python-discovery = ">=1.6"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.14,<4.0"
-content-hash = "bd10dd40112cdc67840be68054b04a63fd27157b312c5be2061f0c96df78c3aa"
+content-hash = "62d2166eea28fc1d824222120251359a0da4731d9dece2d3eace53501e8fa24c"

@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+title: rsm-schema
+message: "If you use this software, please cite it using the metadata in this file."
+type: software
+abstract: >-
+  Python access to the RSM JSON Schema, generated Pydantic models, and schema inspection utilities.
+authors:
+  - family-names: Steeghs-Turchina
+    given-names: Mariia
+    affiliation: Leiden University Medical Center
+    orcid: https://orcid.org/0000-0002-0852-4752
+version: 1.0.0
+repository-code: https://github.com/LUMC-DCC/rsm-schema
+url: https://lumc-dcc.github.io/rsm-schema/
+license: Apache-2.0

@@ -29,6 +29,7 @@ maintainers = [
 dependencies = [
     "pydantic[email]>=2.13,<3.0",
     "jsonschema>=4.0,<5.0",
+    "rs-metadata (>=1.0.0,<2.0.0)",
 ]
 
 [project.urls]

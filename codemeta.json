@@ -1,0 +1,77 @@
+{
+  "@context": [
+    "https://w3id.org/codemeta/3.1",
+    {
+      "schema": "https://schema.org/"
+    }
+  ],
+  "@type": "SoftwareSourceCode",
+  "name": "rsm-schema",
+  "description": "Python access to the RSM JSON Schema, generated Pydantic models, and schema inspection utilities.",
+  "version": "1.0.0",
+  "identifier": "https://github.com/LUMC-DCC/rsm-schema",
+  "author": [
+    {
+      "@id": "https://orcid.org/0000-0002-0852-4752",
+      "@type": "Person",
+      "givenName": "Mariia",
+      "familyName": "Steeghs-Turchina",
+      "affiliation": {
+        "@type": "Organization",
+        "@id": "https://ror.org/05xvt9f17",
+        "name": "Leiden University Medical Center"
+      }
+    }
+  ],
+  "maintainer": [
+    {
+      "@id": "https://orcid.org/0000-0002-0852-4752",
+      "@type": "Person",
+      "givenName": "Mariia",
+      "familyName": "Steeghs-Turchina",
+      "affiliation": {
+        "@type": "Organization",
+        "@id": "https://ror.org/05xvt9f17",
+        "name": "Leiden University Medical Center"
+      }
+    },
+    {
+      "@id": "https://orcid.org/0000-0002-9839-5439",
+      "@type": "Person",
+      "givenName": "Anna",
+      "familyName": "Niehues",
+      "affiliation": {
+        "@type": "Organization",
+        "@id": "https://ror.org/05xvt9f17",
+        "name": "Leiden University Medical Center"
+      }
+    }
+  ],
+  "license": "https://spdx.org/licenses/Apache-2.0",
+  "codeRepository": "https://github.com/LUMC-DCC/rsm-schema",
+  "url": "https://lumc-dcc.github.io/rsm-schema/",
+  "issueTracker": "https://github.com/LUMC-DCC/rsm-schema/issues",
+  "continuousIntegration": "https://github.com/LUMC-DCC/rsm-schema/actions",
+  "softwareHelp": [
+    {
+      "@type": "CreativeWork",
+      "name": "Documentation",
+      "url": "https://lumc-dcc.github.io/rsm-schema/"
+    }
+  ],
+  "developmentStatus": "active",
+  "programmingLanguage": [
+    {
+      "@type": "ComputerLanguage",
+      "name": "Python",
+      "version": ">=3.14"
+    }
+  ],
+  "runtimePlatform": [
+    "Python"
+  ],
+  "applicationCategory": "Library",
+  "schema:featureList": [
+    "http://edamontology.org/operation_0224"
+  ]
+}
