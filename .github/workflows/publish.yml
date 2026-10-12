@@ -1,0 +1,163 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: Where to upload.
+        type: choice
+        options: [testpypi, pypi]
+        default: testpypi
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up project
+        uses: ./.github/actions/setup
+
+      # The tag is what people will cite; pyproject.toml is what gets
+      # installed. If they disagree, the wrong version is burned permanently.
+      - name: Tag matches the package version
+        if: github.event_name == 'release'
+        shell: bash
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          declared="$(poetry version --short)"
+          echo "tag=${TAG}  pyproject=${declared}"
+          if [ "${TAG#v}" != "${declared}" ]; then
+            echo "::error::Release tag ${TAG} does not match version ${declared}." >&2
+            exit 1
+          fi
+
+      # The $id is the URL the schema is served at, and that URL carries the
+      # version. Publishing a package whose schema points somewhere else would
+      # ship a $ref that resolves to different content than the wheel contains.
+      - name: Schema $id matches the package version
+        shell: bash
+        run: |
+          set -euo pipefail
+          poetry run python - <<'PY'
+          import json, pathlib, sys
+          from importlib.metadata import version
+          release = version("rsm-schema")
+          expected = f"https://lumc-dcc.github.io/rsm-schema/schema/{release}/rsm.schema.json"
+          schema = json.loads(
+              pathlib.Path("src/rsm_schema/schema/rsm.schema.json").read_text(encoding="utf-8")
+          )
+          if schema["$id"] != expected:
+              sys.exit(f"::error::$id is {schema['$id']}, expected {expected}")
+          archived = pathlib.Path("schema-archive") / release / "rsm.schema.json"
+          if not archived.is_file():
+              sys.exit(f"::error::{archived} is missing; the release is not archived.")
+          print(f"$id and archive agree for {release}")
+          PY
+
+      - name: Build
+        run: poetry build
+
+      - name: Check the artifacts
+        run: |
+          pipx install twine
+          twine check --strict dist/*
+
+      # The schema JSON and py.typed are data files. If they stop being packaged
+      # the library still imports from a source checkout and only breaks once
+      # installed from a wheel, so check the wheel itself.
+      - name: Wheel contains its data files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m zipfile -l dist/*.whl
+          python -m zipfile -l dist/*.whl | grep -q 'rsm_schema/schema/rsm.schema.json'
+          python -m zipfile -l dist/*.whl | grep -q 'rsm_schema/py.typed'
+          # schema-archive/ is a repository record for republishing old releases,
+          # not package data. Shipping it would put every past schema in the wheel.
+          ! python -m zipfile -l dist/*.whl | grep -q 'schema-archive'
+
+      # A wheel that imports in the repository but not outside it is the
+      # classic packaging failure: data files declared but never included.
+      # Running from another directory keeps the source tree off sys.path.
+      - name: Install the wheel somewhere else and use it
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m venv "${RUNNER_TEMP}/smoke"
+          "${RUNNER_TEMP}/smoke/bin/pip" install --quiet dist/*.whl
+          cd "${RUNNER_TEMP}"
+          "${RUNNER_TEMP}/smoke/bin/python" - <<'PY'
+          import rsm_schema
+          from rsm_schema import RSMMetadata, schema
+
+          # Reads the bundled JSON through importlib.resources.
+          schema.validate_schema()
+          assert schema.definition("person").pointer == "/$defs/person"
+
+          metadata = RSMMetadata.model_validate({"project_slug": "smoke-test"})
+          assert metadata.keywords.entries == []
+
+          print(f"rsm-schema {rsm_schema.__version__}: {schema.title}")
+          PY
+
+      - name: Upload distributions
+        uses: actions/upload-artifact@v7
+        with:
+          name: distributions
+          path: dist/
+
+  testpypi:
+    name: TestPyPI
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && inputs.repository == 'testpypi'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/rsm-schema/
+    permissions:
+      id-token: write
+    steps:
+      - name: Download distributions
+        uses: actions/download-artifact@v8
+        with:
+          name: distributions
+          path: dist/
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  pypi:
+    name: PyPI
+    needs: build
+    if: github.event_name == 'release' || inputs.repository == 'pypi'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: pypi
+      url: https://pypi.org/project/rsm-schema/
+    # Trusted Publishing: PyPI verifies this workflow's OIDC identity, so
+    # there is no API token to store, leak or rotate. Configure it once at
+    # https://pypi.org/manage/project/rsm-schema/settings/publishing/
+    permissions:
+      id-token: write
+    steps:
+      - name: Download distributions
+        uses: actions/download-artifact@v8
+        with:
+          name: distributions
+          path: dist/
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
