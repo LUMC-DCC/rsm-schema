@@ -46,13 +46,13 @@ include = [
 ]
 
 [tool.poetry.group.dev.dependencies]
-datamodel-code-generator = { version = ">=0.83.0,<1.0", extras = ["ruff"] }
-pre-commit = ">=4.2,<5.0"
+datamodel-code-generator = { version = ">=0.84.0,<1.0", extras = ["ruff"] }
+pre-commit = ">=4.7.0,<5.0"
 pytest = ">=8.0,<10.0"
-ruff = ">=0.16.10,<1.0"
+ruff = ">=0.17.1,<1.0"
 
 [tool.poetry.group.docs.dependencies]
-sphinx = ">=8.1,<10.0"
+sphinx = ">=9.1.0,<10.0"
 # conf.py sorts the archived schema versions; Sphinx pulls this in anyway, but
 # the docs build depends on it directly, so it is declared directly.
 packaging = ">=24.0"
